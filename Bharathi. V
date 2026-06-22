@@ -1,0 +1,111 @@
+import React, { useState } from "react";
+import "./App.css";
+
+function App() {
+  const [assignments, setAssignments] = useState([]);
+  const [title, setTitle] = useState("");
+  const [subject, setSubject] = useState("");
+  const [dueDate, setDueDate] = useState("");
+
+  const addAssignment = () => {
+    if (!title || !subject || !dueDate) {
+      alert("Please fill all fields");
+      return;
+    }
+
+    const newAssignment = {
+      id: Date.now(),
+      title,
+      subject,
+      dueDate,
+      submitted: false,
+    };
+
+    setAssignments([...assignments, newAssignment]);
+    setTitle("");
+    setSubject("");
+    setDueDate("");
+  };
+
+  const toggleSubmission = (id) => {
+    setAssignments(
+      assignments.map((assignment) =>
+        assignment.id === id
+          ? { ...assignment, submitted: !assignment.submitted }
+          : assignment
+      )
+    );
+  };
+
+  const deleteAssignment = (id) => {
+    setAssignments(
+      assignments.filter((assignment) => assignment.id !== id)
+    );
+  };
+
+  return (
+    <div className="container">
+      <h1>College Assignment Submission Tracker</h1>
+
+      <div className="form">
+        <input
+          type="text"
+          placeholder="Assignment Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+
+        <input
+          type="text"
+          placeholder="Subject"
+          value={subject}
+          onChange={(e) => setSubject(e.target.value)}
+        />
+
+        <input
+          type="date"
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
+        />
+
+        <button onClick={addAssignment}>Add Assignment</button>
+      </div>
+
+      <div className="assignment-list">
+        {assignments.length === 0 ? (
+          <p>No assignments added.</p>
+        ) : (
+          assignments.map((assignment) => (
+            <div className="card" key={assignment.id}>
+              <h3>{assignment.title}</h3>
+              <p><strong>Subject:</strong> {assignment.subject}</p>
+              <p><strong>Due Date:</strong> {assignment.dueDate}</p>
+              <p>
+                <strong>Status:</strong>{" "}
+                {assignment.submitted ? "Submitted ✅" : "Pending ⏳"}
+              </p>
+
+              <button
+                className="submit-btn"
+                onClick={() => toggleSubmission(assignment.id)}
+              >
+                {assignment.submitted
+                  ? "Mark Pending"
+                  : "Mark Submitted"}
+              </button>
+
+              <button
+                className="delete-btn"
+                onClick={() => deleteAssignment(assignment.id)}
+              >
+                Delete
+              </button>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default App;
